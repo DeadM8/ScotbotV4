@@ -139,8 +139,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-.cache-Mona.l.Sims
-.cache-deadm8
 .idea/.gitignore
 .idea/ScotbotV4.iml
 .idea/inspectionProfiles/
