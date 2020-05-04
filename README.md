@@ -18,9 +18,13 @@
 ###Discord
 #####Features  
 Features:
-- [ ] Chat Logging
-- [ ] Polls
-- [ ] Dice Rolls
+- [x] Chat Logging
+- [x] Polls
+- [x] Dice Rolls
+- [x] Youtube video searching
+- [x] Automatic role assignment
+- [x] Welcome messages
+- [x] Playback of youtube videos in voice channels
 - [ ] Starting webhooks
 
 ######Main Packages
