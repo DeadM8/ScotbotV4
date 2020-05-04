@@ -1,49 +1,50 @@
+"""Custom Logging"""
 import logging
 
 # Reset
-Color_Off = "\033[0m"       # Text Reset
+COLOUR_OFF = "\033[0m"       # Text Reset
 
 # Regular Colors
-Black = "\033[0;30m"        # Black
-Red = "\033[0;31m"          # Red
-Green = "\033[0;32m"        # Green
-Yellow = "\033[0;33m"       # Yellow
-Blue = "\033[0;34m"         # Blue
-Purple = "\033[0;35m"       # Purple
-Cyan = "\033[0;36m"         # Cyan
-Grey = "\033[0;37m"        # Grey
-White = "\033[0;38m"        # White
+BLACK = "\033[0;30m"        # Black
+RED = "\033[0;31m"          # Red
+GREEN = "\033[0;32m"        # Green
+YELLOW = "\033[0;33m"       # Yellow
+BLUE = "\033[0;34m"         # Blue
+PURPLE = "\033[0;35m"       # Purple
+CYAN = "\033[0;36m"         # Cyan
+GREY = "\033[0;37m"        # Grey
+WHITE = "\033[0;38m"        # White
 
 # Bold
-BBlack = "\033[1;30m"       # Black
-BRed = "\033[1;31m"         # Red
-BGreen = "\033[1;32m"       # Green
-BYellow = "\033[1;33m"      # Yellow
-BBlue = "\033[1;34m"        # Blue
-BPurple = "\033[1;35m"      # Purple
-BCyan = "\033[1;36m"        # Cyan
-BGrey = "\033[1;37m"       # Grey
-BWhite = "\033[1;38m"       # White
+BBLACK = "\033[1;30m"       # Black
+BRED = "\033[1;31m"         # Red
+BGREEN = "\033[1;32m"       # Green
+BYELLOW = "\033[1;33m"      # Yellow
+BBLUE = "\033[1;34m"        # Blue
+BPURPLE = "\033[1;35m"      # Purple
+BCYAN = "\033[1;36m"        # Cyan
+BGREY = "\033[1;37m"       # Grey
+BWHITE = "\033[1;38m"       # White
 
 # Underline
-UBlack = "\033[4;30m"       # Black
-URed = "\033[4;31m"         # Red
-UGreen = "\033[4;32m"       # Green
-UYellow = "\033[4;33m"      # Yellow
-UBlue = "\033[4;34m"        # Blue
-UPurple = "\033[4;35m"      # Purple
-UCyan = "\033[4;36m"        # Cyan
-UWhite = "\033[4;37m"       # White
+UBLACK = "\033[4;30m"       # Black
+URED = "\033[4;31m"         # Red
+UGREEN = "\033[4;32m"       # Green
+UYELLOW = "\033[4;33m"      # Yellow
+UBLUE = "\033[4;34m"        # Blue
+UPURPLE = "\033[4;35m"      # Purple
+UCYAN = "\033[4;36m"        # Cyan
+UWHITE = "\033[4;37m"       # White
 
 # Background
-On_Black = "\033[40m"       # Black
-On_Red = "\033[41m"         # Red
-On_Green = "\033[42m"       # Green
-On_Yellow = "\033[43m"      # Yellow
-On_Blue = "\033[44m"        # Blue
-On_Purple = "\033[45m"      # Purple
-On_Cyan = "\033[46m"        # Cyan
-On_White = "\033[47m"       # White
+ON_BLACK = "\033[40m"       # Black
+ON_RED = "\033[41m"         # Red
+ON_GREEN = "\033[42m"       # Green
+ON_YELLOW = "\033[43m"      # Yellow
+ON_BLUE = "\033[44m"        # Blue
+ON_PURPLE = "\033[45m"      # Purple
+ON_CYAN = "\033[46m"        # Cyan
+ON_WHITE = "\033[47m"       # White
 
 logging.getLogger('twitchio').setLevel(logging.INFO)
 logging.getLogger("asyncio").setLevel(logging.ERROR)
@@ -52,45 +53,44 @@ logging.getLogger("spotipy.client").setLevel(logging.ERROR)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
 logging.getLogger("twitchio.websocket").setLevel(logging.ERROR)
 
-
 def setupLogger(logger):
-    formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] | %(message)s', '%d/%m/%Y %H:%M:%S')
-    sh = logging.StreamHandler()
-    sh.setFormatter(formatter)
+    """Setup Custom Logger"""
+    formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] | %(message)s', '%d/%m/%Y %H:%M:%S')
+    streamHandler = logging.StreamHandler()
+    streamHandler.setFormatter(formatter)
     logger.setLevel(5)
 
-    def decorate_emit(fn):
+    def decorateEmit(formatHandler):
         def new(*args):
             levelno = args[0].levelno
             if levelno >= logging.CRITICAL:
-                colour = BPurple
+                colour = BPURPLE
             elif levelno >= logging.ERROR:
-                colour = BRed
+                colour = BRED
             elif levelno >= logging.WARNING:
-                colour = BYellow
+                colour = BYELLOW
             elif levelno >= logging.INFO:
-                colour = BGrey
+                colour = BGREY
             elif levelno >= logging.DEBUG:
-                colour = BGreen
+                colour = BGREEN
             elif levelno == 5:
-                colour = BBlue
+                colour = BBLUE
                 args[0].levelname = "CHAT"
             elif levelno == 6:
-                colour = BCyan
+                colour = BCYAN
                 args[0].levelname = "COMMAND"
             elif levelno == 7:
-                colour = BWhite
+                colour = BWHITE
                 args[0].levelname = "BOT MESSAGE"
             elif levelno == 8:
-                colour = BGreen
+                colour = BGREEN
                 args[0].levelname = "SPOTIFY"
             else:
-                colour = Color_Off
+                colour = COLOUR_OFF
             args[0].levelname = "{0}{1}\033[0;0m".format(colour, args[0].levelname)
-            args[0].name = "{0}{1}\033[0;0m".format(BBlack, args[0].name)
-            return fn(*args)
+            args[0].name = "{0}{1}\033[0;0m".format(BBLACK, args[0].name)
+            return formatHandler(*args)
         return new
 
-    sh.emit = decorate_emit(sh.emit)
-    logger.addHandler(sh)
-
+    streamHandler.emit = decorateEmit(streamHandler.emit)
+    logger.addHandler(streamHandler)

@@ -150,12 +150,12 @@ cython_debug/
 .pylintrc
 Chat_Logs/
 Giveaways/
-LiveStatus.txt
+LiveStatus.csv
 Spotify.py
 app_list.csv
 auth.py
-cogs/__pycache__/
-cogs/webhook.py
+twitch_cogs/__pycache__/
+twitch_cogs/webhook.py
 liveStatus.csv
 logs.log
 main.py

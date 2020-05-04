@@ -1,17 +1,21 @@
+"""Polls Module"""
 import logging
 from twitchio.ext import commands
-from Classes import StreamChannel
-
+from twitchClasses import StreamChannel
+import logger as _logger
 
 LOGGER = logging.getLogger(__name__)
+_logger.setupLogger(LOGGER)
 
 @commands.cog()
 class PollCog:
+    """Poll Cog"""
     def __init__(self, bot):
         self._bot = bot
 
     @commands.command(name="pollOpen")
     async def pollOpen(self, ctx):
+        """Opens a poll"""
         if await self._bot.checkMod(ctx):
             channel: StreamChannel = self._bot.channels[ctx.channel.name]
             pollOptions = ctx.message.content.split("pollOpen ")[1].split("|")
@@ -25,6 +29,7 @@ class PollCog:
 
     @commands.command(name="vote")
     async def vote(self, ctx):
+        """Vote Command"""
         channel: StreamChannel = self._bot.channels[ctx.channel.name]
         if channel.pollOptions and ctx.author.name not in channel.pollEntrants:
             vote = int(ctx.message.content.split("vote ")[1])
@@ -33,6 +38,7 @@ class PollCog:
 
     @commands.command(name="pollClose")
     async def pollClose(self, ctx):
+        """Closes a Poll"""
         if await self._bot.checkMod(ctx):
             channel: StreamChannel = self._bot.channels[ctx.channel.name]
             if channel.pollOptions:
@@ -40,4 +46,3 @@ class PollCog:
                                f"{'; '.join([f'{key}: {value}' for key, value in channel.pollOptions.items()])}")
                 channel.pollOptions.clear()
                 channel.pollEntrants.clear()
-

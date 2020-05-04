@@ -1,34 +1,38 @@
+"""Module which deals with giveaways"""
 import logging
 import os
 import random
 import asyncio
 from twitchio.ext import commands
-from Classes import StreamChannel
-
+from twitchClasses import StreamChannel
+import logger as _logger
 
 LOGGER = logging.getLogger(__name__)
-
-
-async def saveGiveawayEntrants(channel: StreamChannel):
-    """Saves giveaway entrants to file"""
-    if len(channel.giveawayEntrants) > 0:
-        with open(await channel.entrantsFile(), "a+", encoding='utf-8') as entrantsFile:
-            for entrant in channel.giveawayEntrants:
-                entrantsFile.write(f"{entrant}\n")
-        LOGGER.info(f"{channel} | {len(channel.giveawayEntrants)} entrant(s) added to the giveaway")
-        channel.giveawayEntrants.clear()
-    else:
-        LOGGER.info(f"{channel} | Entrants list checked")
-
-async def saveGiveawayEntrantsLoop(channel: StreamChannel):
-    while channel.giveawayWord is not None:
-        await saveGiveawayEntrants(channel)
-        await asyncio.sleep(30)
+_logger.setupLogger(LOGGER)
 
 @commands.cog()
 class GiveawayCog:
+    """Giveaway Cog"""
     def __init__(self, bot):
         self._bot = bot
+
+    @staticmethod
+    async def saveGiveawayEntrants(channel: StreamChannel):
+        """Saves giveaway entrants to file"""
+        if len(channel.giveawayEntrants) > 0:
+            with open(await channel.entrantsFile(), "a+", encoding='utf-8') as entrantsFile:
+                for entrant in channel.giveawayEntrants:
+                    entrantsFile.write(f"{entrant}\n")
+            LOGGER.info(f"{channel} | {len(channel.giveawayEntrants)} entrant(s) added to the giveaway")
+            channel.giveawayEntrants.clear()
+        else:
+            LOGGER.info(f"{channel} | Entrants list checked")
+
+    async def saveGiveawayEntrantsLoop(self, channel: StreamChannel):
+        """Starts giveaway entrants saving loop, stops when poll finishes (giveaway word is None)"""
+        while channel.giveawayWord is not None:
+            await self.saveGiveawayEntrants(channel)
+            await asyncio.sleep(30)
 
     @commands.command(name="giveawayOpen")
     async def giveawayOpen(self, ctx):
@@ -49,7 +53,7 @@ class GiveawayCog:
                 winnersFile = await channel.winnersFile()
                 if os.path.exists(winnersFile):
                     os.remove(winnersFile)
-                self._bot.loop.create_task(saveGiveawayEntrantsLoop(channel))
+                self._bot.loop.create_task(self.saveGiveawayEntrantsLoop(channel))
                 await ctx.send(f"Giveaway opened by {ctx.message.author.display_name}. To enter, please type: {channel.giveawayWord}")
                 LOGGER.info(f"Giveaway with keyword '{channel.giveawayWord}' opened")
 
@@ -61,7 +65,7 @@ class GiveawayCog:
             if channel.giveawayWord is None:
                 await ctx.send(f"@{ctx.author.display_name}, there is no open giveaway to draw! Please use '!giveawayOpen' to start one")
             else:
-                await saveGiveawayEntrants(channel)
+                await self.saveGiveawayEntrants(channel)
                 with open(await channel.entrantsFile(), "r", encoding="utf-8") as entrantsFile:
                     for entrant in entrantsFile:
                         channel.giveawayEntrants.append(entrant)
@@ -84,7 +88,7 @@ class GiveawayCog:
             if channel.giveawayWord is None:
                 await ctx.send(f"@{ctx.message.author.display_name}, there is no open giveaway to draw! Please use '!giveawayOpen' to start one")
             else:
-                await saveGiveawayEntrants(channel)
+                await self.saveGiveawayEntrants(channel)
                 entrants = len(open(await channel.entrantsFile(), "r").readlines()) + len(open(await channel.winnersFile(), "r").readlines())
                 channel.giveawayWord = None
                 await ctx.send(f"Giveaway closed! Thank you to the {entrants} people that entered!")

@@ -1,6 +1,5 @@
 import os
 import sanic
-import requests
 from sanic import response
 
 class StreamChannel:
@@ -16,11 +15,11 @@ class StreamChannel:
         self.isLive: bool = False
         self.giveawayWord = None
         self.giveawayEntrants = []
-        self.spotifyNameSecret = None
+        self.spotifyNameSecret: str
         self.spotifyTrack = None
         self.channelObject = None
         self.currentlyPlaying = None
-        self.displayName = name
+        self.displayName: str = ""
         self.id: int = 0
         self.webhookToken: str = ""
         self.webhookId: int = 0
