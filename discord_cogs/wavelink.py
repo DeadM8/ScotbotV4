@@ -9,8 +9,8 @@ import logging
 import logger as _logger
 from discord.ext import commands
 from typing import Union
+from auth import VALIDSERVERS
 
-VALIDSERVERS = ["The Scotbot Haggis Hill", "Tooth and Tale", "AmsterDAMN"]
 
 RURL = re.compile('https?:\/\/(?:www\.)?.+')
 SURL = re.compile('https://open.spotify.com?.+playlist/([a-zA-Z0-9]+)')
